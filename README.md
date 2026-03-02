@@ -1,82 +1,75 @@
-# 🚀 EgyFlow | نظام إدارة الثانوية العامة الذكي
+# 🌊 EgyFlow | The Ultimate Study OS
 
 <div align="center">
-  <img src="https://via.placeholder.com/1200x400.png?text=EgyFlow+Dashboard+Preview" alt="EgyFlow Banner" width="100%" />
-  
-  <br />
-  
+
+  ![EgyFlow Banner](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=250&section=header&text=EgyFlow&fontSize=90&animation=fadeIn&fontAlignY=38&desc=Master%20Your%20Study%20Chaos&descAlignY=55&descAlign=50)
+
+  [![Status](https://img.shields.io/badge/Status-Beta-blue?style=for-the-badge&logo=rocket)](https://github.com/gats/egyflow)
+  [![Made by](https://img.shields.io/badge/Made%20by-Gats-orange?style=for-the-badge&logo=github)](https://github.com/gats)
+  [![Tech](https://img.shields.io/badge/Stack-Next.js-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
+
   <h3>
-    <b>حول الفوضى إلى نظام. حول المذاكرة إلى "Flow".</b>
+    ✨ من الفوضى إلى القمة ✨
+    <br>
+    نظام التشغيل الدراسي الأول لطلاب الثانوية العامة.
   </h3>
-
-  <p>
-    أول نظام تشغيل دراسي (Study OS) مصمم خصيصاً لطلاب الثانوية العامة في مصر، لمواجهة تشتت المنصات المتعددة وضغط الامتحانات.
-  </p>
-
-  <p>
-    <a href="#-features"><strong>Explore the Features »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/yourusername/egyflow">View Demo</a>
-    ·
-    <a href="https://github.com/yourusername/egyflow/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/yourusername/egyflow/issues">Request Feature</a>
-  </p>
 </div>
 
 ---
 
-## 📖 القصة (The Story)
+## 🎩 عن المشروع (About)
 
-تم بناء **EgyFlow** بواسطة طالب في الصف الأول الثانوي، في وسط "معركة" المناهج المصرية، ونظام الـ 70% أعمال سنة، والاشتراك في أكثر من 6 منصات تعليمية مختلفة.
+> **"الظروف الصعبة تصنع الجنرالات."** — *Gats*
 
-كان الهدف بسيطاً: **كيف أنجو من هذا الطوفان؟**
-بدلاً من الاستسلام للتشتت، قررت بناء "المخ" الذي يدير حياتي الدراسية.
+تم بناء **EgyFlow** في قلب المعركة. طالب ثانوي، 6 منصات، مدرسة عسكرية، وضغط لا ينتهي. 
+لم أبحث عن حل، بل **برمجته**.
 
-**EgyFlow ليس مجرد جدول، هو "شريكك" في الرحلة.**
-
----
-
-## ✨ المميزات (Features)
-
-### 🧘‍♂️ وضع التركيز العميق (Deep Focus Mode)
-*   واجهة زجاجية (Glassmorphism) مريحة للعين ومستوحاة من *Flocus*.
-*   تايمر بومودورو (Pomodoro) ذكي مرتبط بالمهام.
-*   خلفيات تفاعلية (غابة، فضاء، ليل) لزيادة الروقان.
-
-### 🎛️ لوحة القيادة (Student Dashboard)
-*   تجميع شامل لجميع المنصات المصرية (عربي، رياضة، علوم، تاريخ...).
-*   رادار **"المتراكم" (Backlog Radar)**: ينبهك بالدروس التي لم تنتهِ باللون الأحمر.
-*   تتبع درجات أعمال السنة (التقييمات الأسبوعية والشهرية).
-
-### 🧠 الذاكرة الدائمة (Persistent Brain)
-*   يعتمد النظام على **Zustand** مع **Local Persistence**.
-*   لن تفقد بياناتك حتى لو أغلقت المتصفح.
-
-### 📊 التحليلات (Analytics)
-*   رسوم بيانية توضح ساعات المذاكرة اليومية والأسبوعية.
-*   نظام **Gamification**: احصل على "رتب" و "نيران" (Streaks) عند الالتزام.
+هذا المشروع ليس مجرد تطبيق لتنظيم الوقت؛ إنه **سلاحك السري** لاكتساح المناهج المتراكمة، وتنظيم الـ 70% أعمال سنة، وتحويل المذاكرة من "عبء" إلى "لعبة ممتعة".
 
 ---
 
-## 🛠️ التقنيات المستخدمة (Tech Stack)
+## 💎 المميزات الخرافية (Key Features)
 
-تم بناء هذا المشروع باستخدام أحدث تقنيات الويب (Modern Web Stack):
-
-*   **Frontend:** [React](https://reactjs.org/) + [Next.js 14](https://nextjs.org/) (App Router)
-*   **Styling:** [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/ui](https://ui.shadcn.com/)
-*   **Animations:** [Framer Motion](https://www.framer.com/motion/)
-*   **State Management:** [Zustand](https://github.com/pmndrs/zustand)
-*   **Icons:** [Lucide React](https://lucide.dev/)
-*   **Charts:** [Recharts](https://recharts.org/)
+| الميزة 🌟 | الوصف 📝 |
+| :--- | :--- |
+| **🧘 Focus Mode** | واجهة زجاجية (Glassmorphism) مريحة للأعصاب، مع تايمر بومودورو ذكي يعزلك عن العالم. |
+| **🎛️ Command Center** | لوحة تحكم تجمع (محمد صلاح، لطفي زهران، الجوهري..) في مكان واحد. وداعاً للتشتت. |
+| **🚨 Backlog Radar** | رادار ذكي يكشف "المتراكم" وينبهك باللون الأحمر قبل فوات الأوان. |
+| **🧠 The Brain** | ذاكرة دائمة (Persistent Storage) لا تنسى إنجازاتك أبداً، حتى لو أغلقت المتصفح. |
+| **📈 Smart Analytics** | رسوم بيانية توضح مستواك أسبوعياً، لتعرف متى تهاجم ومتى ترتاح. |
 
 ---
 
-## 🚀 التشغيل محلياً (Getting Started)
+## 🛠️ الترسانة التقنية (Tech Stack)
 
-لتشغيل المشروع على جهازك، اتبع الخطوات التالية:
+تم بناء هذا الوحش باستخدام أحدث تقنيات الويب في العالم:
 
-1. **انسخ المشروع (Clone):**
-   ```bash
-   git clone https://github.com/yourusername/egyflow.git
+- **⚛️ Core:** `Next.js 14` (App Router) + `React`
+- **🎨 Styling:** `Tailwind CSS` + `Shadcn/ui` + `Framer Motion` (للأنيميشن السلس)
+- **🧠 State:** `Zustand` (إدارة حالة التطبيق بذكاء)
+- **📊 Charts:** `Recharts` (لتحليل البيانات)
+- **🔥 Backend:** `Firebase` (قريباً للمزامنة السحابية)
+
+---
+
+## 🚀 رحلة التطوير (Dev Journey)
+
+- [x] **Phase 1:** بناء الهيكل الأساسي ووضع التركيز (Done ✅).
+- [x] **Phase 2:** برمجة "المخ" وربط البيانات (Done ✅).
+- [x] **Phase 3:** تصميم لوحة التحكم بالهوية العربية (Done ✅).
+- [ ] **Phase 4:** إطلاق نظام الجيمفيكيشن (Ranks & Badges).
+- [ ] **Phase 5:** الإصدار العام للطلاب (Public Launch).
+
+---
+
+## 👑 المؤسس (The Creator)
+
+تم التصميم والبرمجة بواسطة **[Gats](https://github.com/gats)**.
+
+> *"أنا لا أكتب الكود فقط، أنا أكتب مستقبلي."*
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ and ☕ in Egypt.</sub>
+</div>
