@@ -5,7 +5,7 @@
   ![EgyFlow Banner](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=250&section=header&text=EgyFlow&fontSize=90&animation=fadeIn&fontAlignY=38&desc=Master%20Your%20Study%20Chaos&descAlignY=55&descAlign=50)
 
   [![Status](https://img.shields.io/badge/Status-Beta-blue?style=for-the-badge&logo=rocket)](https://github.com/gats/egyflow)
-  [![Made by](https://img.shields.io/badge/Made%20by-Gats-orange?style=for-the-badge&logo=github)](https://github.com/gats)
+  [![Made by](https://img.shields.io/badge/Made%20by-Gats-orange?style=for-the-badge&logo=github)](https://github.com/merms2002)
   [![Tech](https://img.shields.io/badge/Stack-Next.js-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 
   <h3>
