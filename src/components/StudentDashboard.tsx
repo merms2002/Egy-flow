@@ -38,17 +38,26 @@ const StudentDashboard = ({ user, onSwitchMode }: StudentDashboardProps) => {
     // Sessions listener
     const q = query(
       collection(db, 'sessions'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc'),
-      limit(3)
+      where('userId', '==', user.uid)
     );
 
     const sessionsUnsub = onSnapshot(q, (snapshot) => {
-      const sessions = snapshot.docs.map(doc => ({
+      let sessions = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         date: doc.data().createdAt?.toDate()
       }));
+      
+      // Sort client-side to avoid index requirement
+      sessions.sort((a, b) => {
+        const timeA = a.date ? a.date.getTime() : 0;
+        const timeB = b.date ? b.date.getTime() : 0;
+        return timeB - timeA;
+      });
+      
+      // Limit client-side
+      sessions = sessions.slice(0, 3);
+      
       setRecentSessions(sessions);
     });
 
