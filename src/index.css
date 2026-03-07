@@ -17,5 +17,15 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #000;
+  background-color: #190019;
+}
+
+:root {
+  /* Palette from provided reference image */
+  --egy-plum-950: #190019;
+  --egy-plum-800: #2b124c;
+  --egy-plum-700: #522b5b;
+  --egy-mauve-600: #854f6c;
+  --egy-rose-200: #dfb6b2;
+  --egy-cream-100: #fbe4d8;
 }
