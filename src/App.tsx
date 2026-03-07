@@ -29,10 +29,10 @@ import ClockMode from './components/modes/ClockMode';
 
 const MotionButton = ({ children, onClick, className, title, active = false }: any) => (
   <motion.button
-    whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
+    whileHover={{ scale: 1.1, backgroundColor: "rgba(251, 228, 216, 0.28)" }}
     whileTap={{ scale: 0.9 }}
     onClick={onClick}
-    className={`${className} ${active ? 'bg-white text-black shadow-lg scale-105' : ''} transition-colors duration-200 shrink-0`}
+    className={`${className} ${active ? 'bg-[var(--egy-cream-100)] text-[var(--egy-plum-950)] shadow-lg scale-105' : ''} transition-colors duration-200 shrink-0`}
     title={title}
   >
     {children}
@@ -137,7 +137,7 @@ export default function App() {
     if (appMode === 'student-dashboard') {
       return {
         type: 'solid',
-        value: '#0f0f13',
+        value: 'var(--egy-plum-950)',
         overlay: 0,
         blur: 0
       };
@@ -192,14 +192,14 @@ export default function App() {
       }`} 
       dir={isRTL ? 'rtl' : 'ltr'}
       style={{
-        '--primary-color': settings.primaryColor === 'violet' ? '#8b5cf6' :
-                           settings.primaryColor === 'fuchsia' ? '#d946ef' :
-                           settings.primaryColor === 'rose' ? '#f43f5e' :
-                           settings.primaryColor === 'orange' ? '#f97316' :
-                           settings.primaryColor === 'amber' ? '#f59e0b' :
-                           settings.primaryColor === 'emerald' ? '#10b981' :
-                           settings.primaryColor === 'cyan' ? '#06b6d4' :
-                           '#6366f1' // Default Indigo
+        '--primary-color': settings.primaryColor === 'violet' ? 'var(--egy-mauve-600)' :
+                           settings.primaryColor === 'fuchsia' ? 'var(--egy-plum-700)' :
+                           settings.primaryColor === 'rose' ? 'var(--egy-rose-200)' :
+                           settings.primaryColor === 'orange' ? 'var(--egy-rose-200)' :
+                           settings.primaryColor === 'amber' ? 'var(--egy-cream-100)' :
+                           settings.primaryColor === 'emerald' ? 'var(--egy-plum-700)' :
+                           settings.primaryColor === 'cyan' ? 'var(--egy-plum-800)' :
+                           'var(--egy-plum-700)' // Default palette tone
       } as React.CSSProperties}
     >
       <NotificationController />
@@ -275,9 +275,9 @@ export default function App() {
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-xl md:text-2xl font-bold tracking-tighter text-white select-none drop-shadow-md pointer-events-auto flex items-center gap-2"
+            className="text-xl md:text-2xl font-bold tracking-tighter text-[var(--egy-cream-100)] select-none drop-shadow-md pointer-events-auto flex items-center gap-2"
           >
-            <LayoutDashboard className="text-indigo-400" size={24} />
+            <LayoutDashboard className="text-[var(--egy-rose-200)]" size={24} />
             EgyFlow
           </motion.div>
           <AnimatePresence>
@@ -381,7 +381,7 @@ export default function App() {
                 onHoverEnd={() => setIsDashboardHovered(false)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-4 md:p-5 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] border border-indigo-400/30 relative z-20 mx-2 flex items-center justify-center group"
+                className="p-4 md:p-5 bg-gradient-to-br from-[var(--egy-plum-700)] to-[var(--egy-plum-800)] rounded-2xl text-[var(--egy-cream-100)] shadow-[0_0_20px_rgba(43,18,76,0.65)] border border-[var(--egy-mauve-600)]/60 relative z-20 mx-2 flex items-center justify-center group"
                 title="Student Dashboard"
               >
                 <LayoutDashboard size={28} className="text-white drop-shadow-md" />
@@ -445,7 +445,7 @@ export default function App() {
                     user.photoURL ? (
                       <img src={user.photoURL} alt="User" className="w-4 h-4 md:w-5 md:h-5 rounded-full" />
                     ) : (
-                      <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] font-bold">
+                      <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[var(--egy-mauve-600)] flex items-center justify-center text-[10px] font-bold">
                         {user.email?.charAt(0).toUpperCase()}
                       </div>
                     )
