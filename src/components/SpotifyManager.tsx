@@ -168,6 +168,23 @@ const SpotifyManager: React.FC<SpotifyManagerProps> = ({ onClose }) => {
     }
   };
 
+  const playPlaylist = async (contextUri: string) => {
+    try {
+      await fetch('https://api.spotify.com/v1/me/player/play', {
+        method: 'PUT',
+        headers: { 
+          Authorization: `Bearer ${spotifyToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ context_uri: contextUri })
+      });
+      setTimeout(fetchPlaybackState, 1000);
+    } catch (e) {
+      console.error(e);
+      alert("Could not play playlist. Make sure you have an active Spotify device.");
+    }
+  };
+
   const togglePlay = async () => {
     if (!currentPlayback) return;
     try {
@@ -365,7 +382,16 @@ const SpotifyManager: React.FC<SpotifyManagerProps> = ({ onClose }) => {
                     <span className="text-sm font-bold text-white/80 uppercase tracking-wider mb-2">Playlist</span>
                     <h1 className="text-5xl font-black text-white mb-4 line-clamp-2">{selectedPlaylist.name}</h1>
                     <p className="text-white/60 text-sm">{selectedPlaylist.description}</p>
-                    <p className="text-white/40 text-sm mt-2">{selectedPlaylist.tracks?.total || 0} songs</p>
+                    <div className="flex items-center gap-4 mt-4">
+                      <button 
+                        onClick={() => playPlaylist(selectedPlaylist.uri)}
+                        className="w-14 h-14 rounded-full bg-[#1DB954] flex items-center justify-center hover:scale-105 transition-transform shadow-lg"
+                        title="Play Playlist"
+                      >
+                        <Play size={28} className="text-black ml-1" fill="black" />
+                      </button>
+                      <p className="text-white/40 text-sm">{selectedPlaylist.tracks?.total || 0} songs</p>
+                    </div>
                   </div>
                 </>
               )}

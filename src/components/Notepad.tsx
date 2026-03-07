@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Plus, Trash2, Search, Save, FileText, 
   Bold, Italic, List, CheckSquare, Code, 
-  Maximize2, Minimize2, MoreVertical, FolderPlus
+  Maximize2, Minimize2, MoreVertical, FolderPlus, Mic, Loader2, Sparkles
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { transcribeAudio, fastAIResponse } from '../services/ai';
 
 interface Note {
   id: string;
@@ -28,6 +29,12 @@ const Notepad: React.FC<NotepadProps> = ({ isOpen, onClose }) => {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  
+  // Audio Transcription State
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   // Load notes from localStorage on mount
   useEffect(() => {
@@ -141,6 +148,68 @@ const Notepad: React.FC<NotepadProps> = ({ isOpen, onClose }) => {
 
     updateNote(activeNote.id, { content: newText });
     // Focus back would be ideal but tricky with React state updates
+  };
+
+  const toggleRecording = async () => {
+    if (isRecording) {
+      mediaRecorderRef.current?.stop();
+      setIsRecording(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        audioChunksRef.current = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          setIsTranscribing(true);
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          
+          // Convert Blob to Base64
+          const reader = new FileReader();
+          reader.readAsDataURL(audioBlob);
+          reader.onloadend = async () => {
+            const base64data = reader.result as string;
+            const base64String = base64data.split(',')[1];
+            
+            const transcription = await transcribeAudio(base64String, 'audio/webm');
+            
+            if (activeNote && transcription) {
+              const newContent = activeNote.content + (activeNote.content ? '\n\n' : '') + transcription;
+              updateNote(activeNote.id, { content: newContent });
+            }
+            setIsTranscribing(false);
+          };
+        };
+
+        mediaRecorder.start();
+        setIsRecording(true);
+      } catch (err) {
+        console.error("Error accessing microphone:", err);
+        alert("Could not access microphone. Please check permissions.");
+      }
+    }
+  };
+
+  const handleSummarize = async () => {
+    if (!activeNote || !activeNote.content.trim()) return;
+    
+    const originalContent = activeNote.content;
+    updateNote(activeNote.id, { content: originalContent + '\n\n> *Summarizing...*' });
+    
+    const summary = await fastAIResponse(`Please provide a concise summary of the following notes:\n\n${originalContent}`);
+    
+    if (summary) {
+      updateNote(activeNote.id, { content: originalContent + `\n\n### AI Summary\n${summary}` });
+    } else {
+      updateNote(activeNote.id, { content: originalContent });
+    }
   };
 
   if (!isOpen) return null;
@@ -265,6 +334,30 @@ const Notepad: React.FC<NotepadProps> = ({ isOpen, onClose }) => {
                   </button>
                   <button onClick={() => insertMarkdown('code')} className="p-2 hover:bg-white/5 rounded-lg text-white/60 hover:text-white" title="Code Block">
                     <Code size={18} />
+                  </button>
+                  <div className="w-px h-6 bg-white/10 mx-1 hidden md:block" />
+                  <button 
+                    onClick={toggleRecording} 
+                    disabled={isTranscribing}
+                    className={`p-2 rounded-lg transition-colors flex items-center gap-2 ${
+                      isRecording 
+                        ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 animate-pulse' 
+                        : isTranscribing 
+                          ? 'bg-white/5 text-white/40 cursor-not-allowed'
+                          : 'hover:bg-white/5 text-white/60 hover:text-white'
+                    }`} 
+                    title={isRecording ? "Stop Recording" : "Transcribe Audio"}
+                  >
+                    {isTranscribing ? <Loader2 size={18} className="animate-spin" /> : <Mic size={18} />}
+                    {isRecording && <span className="text-xs font-medium">Recording...</span>}
+                    {isTranscribing && <span className="text-xs font-medium">Transcribing...</span>}
+                  </button>
+                  <button 
+                    onClick={handleSummarize} 
+                    className="p-2 hover:bg-indigo-500/20 rounded-lg text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1" 
+                    title="Summarize with AI"
+                  >
+                    <Sparkles size={18} />
                   </button>
                 </div>
 

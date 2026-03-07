@@ -83,6 +83,84 @@ async function startServer() {
     }
   });
 
+  // Google Calendar Auth Routes
+  app.get('/api/auth/google/url', (req, res) => {
+    const redirectUri = `${process.env.APP_URL}/auth/google/callback`;
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      return res.status(500).json({ error: 'GOOGLE_CLIENT_ID is not configured' });
+    }
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events',
+      access_type: 'offline',
+      prompt: 'consent'
+    });
+
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    res.json({ url: authUrl });
+  });
+
+  app.get(['/auth/google/callback', '/auth/google/callback/'], async (req, res) => {
+    const { code } = req.query;
+    const redirectUri = `${process.env.APP_URL}/auth/google/callback`;
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return res.status(500).send('Google credentials not configured');
+    }
+
+    try {
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          code: code as string,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+        })
+      });
+
+      const tokenData = await tokenResponse.json();
+
+      if (tokenData.error) {
+        throw new Error(tokenData.error_description || tokenData.error);
+      }
+
+      // Send success message to parent window and close popup
+      res.send(`
+        <html>
+          <body>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage({ 
+                  type: 'GOOGLE_AUTH_SUCCESS',
+                  token: '${tokenData.access_token}'
+                }, '*');
+                window.close();
+              } else {
+                window.location.href = '/';
+              }
+            </script>
+            <p>Authentication successful. This window should close automatically.</p>
+          </body>
+        </html>
+      `);
+    } catch (error) {
+      console.error('Google auth error:', error);
+      res.status(500).send('Authentication failed');
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

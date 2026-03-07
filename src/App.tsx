@@ -17,6 +17,9 @@ import MusicPlayer from './components/MusicPlayer';
 import SpotifyManager from './components/SpotifyManager';
 import AuthModal from './components/AuthModal';
 import GamificationModal from './components/GamificationModal';
+import AIChatbot from './components/AIChatbot';
+
+import NotificationController from './components/NotificationController';
 
 // Modes
 import TimerMode from './components/modes/TimerMode';
@@ -51,6 +54,7 @@ export default function App() {
   const [isGamificationOpen, setIsGamificationOpen] = useState(false);
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [isRTL, setIsRTL] = useState(false); // RTL logic wrapper
+  const [isDashboardHovered, setIsDashboardHovered] = useState(false);
 
   const updateSettings = (newSettings: Partial<AppSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
@@ -121,79 +125,51 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleFullscreen, isStudent]);
 
+  const getYouTubeId = (url: string) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
   const getBackground = () => {
-    // Base image for all modes (Implant Mode aesthetic - Lush Forest)
-    const baseImage = 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop';
-    
-    switch (appMode) {
-      case 'ambient':
-        return {
-          type: 'image',
-          image: baseImage,
-          overlayStyle: { backgroundColor: 'rgba(0, 0, 0, 0.2)' },
-          blurStyle: { filter: 'blur(0px)' }
-        };
-      case 'focus':
-        if (settings.focusBackground === 'solid') {
-          return {
-            type: 'solid',
-            image: '',
-            overlayStyle: { backgroundColor: '#171717' }, // neutral-900
-            blurStyle: { filter: 'blur(0px)' }
-          };
-        } else if (settings.focusBackground.startsWith('gradient-')) {
-          let gradientClass = '';
-          switch (settings.focusBackground) {
-            case 'gradient-morning':
-              gradientClass = 'bg-gradient-to-br from-rose-400 via-fuchsia-500 to-indigo-500';
-              break;
-            case 'gradient-afternoon':
-              gradientClass = 'bg-gradient-to-br from-amber-200 via-orange-400 to-rose-500';
-              break;
-            case 'gradient-evening':
-              gradientClass = 'bg-gradient-to-br from-violet-500 to-purple-900';
-              break;
-            case 'gradient-night':
-              gradientClass = 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900';
-              break;
-          }
-          return {
-            type: 'gradient',
-            gradientClass,
-            image: '',
-            overlayStyle: { backgroundColor: 'transparent' },
-            blurStyle: { filter: 'blur(0px)' }
-          };
-        }
-        return {
-          type: 'image',
-          image: baseImage,
-          overlayStyle: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
-          blurStyle: { filter: 'blur(4px)' }
-        };
-      case 'student-dashboard':
-        return {
-          type: 'solid',
-          image: '', // No background image for student dashboard
-          overlayStyle: { backgroundColor: '#0f0f13' },
-          blurStyle: { filter: 'blur(0px)' }
-        };
-      case 'tracker':
-        return {
-          type: 'image',
-          image: baseImage,
-          overlayStyle: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-          blurStyle: { filter: 'blur(4px)' }
-        };
-      case 'home':
-      default:
-        return {
-          type: 'image',
-          image: baseImage,
-          overlayStyle: { backgroundColor: `rgba(0, 0, 0, ${settings.homeOverlay / 100})` },
-          blurStyle: { filter: `blur(${settings.homeBlur}px)` }
-        };
+    // For student dashboard, keep it dark/solid for readability
+    if (appMode === 'student-dashboard') {
+      return {
+        type: 'solid',
+        value: '#0f0f13',
+        overlay: 0,
+        blur: 0
+      };
     }
+
+    // Map appMode to settings key
+    let config;
+    switch (appMode) {
+      case 'home':
+        config = settings.home;
+        break;
+      case 'focus':
+        config = settings.focus;
+        break;
+      case 'ambient':
+        config = settings.ambient;
+        break;
+      case 'tracker':
+        // Tracker uses home theme or a default? Let's use home for now or a specific one if needed.
+        // For now, let's fallback to home theme for tracker to keep it consistent
+        config = settings.home; 
+        break;
+      default:
+        config = settings.home;
+    }
+
+    return {
+      type: config.type,
+      value: config.value,
+      overlay: config.overlay,
+      blur: config.blur
+    };
   };
 
   const bg = getBackground();
@@ -209,45 +185,89 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden font-sans selection:bg-white/30 text-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div 
+      className={`relative min-h-screen w-full overflow-hidden selection:bg-white/30 text-white ${
+        settings.fontStyle === 'serif' ? 'font-serif' : 
+        settings.fontStyle === 'mono' ? 'font-mono' : 'font-sans'
+      }`} 
+      dir={isRTL ? 'rtl' : 'ltr'}
+      style={{
+        '--primary-color': settings.primaryColor === 'violet' ? '#8b5cf6' :
+                           settings.primaryColor === 'fuchsia' ? '#d946ef' :
+                           settings.primaryColor === 'rose' ? '#f43f5e' :
+                           settings.primaryColor === 'orange' ? '#f97316' :
+                           settings.primaryColor === 'amber' ? '#f59e0b' :
+                           settings.primaryColor === 'emerald' ? '#10b981' :
+                           settings.primaryColor === 'cyan' ? '#06b6d4' :
+                           '#6366f1' // Default Indigo
+      } as React.CSSProperties}
+    >
+      <NotificationController />
       {/* Background */}
-      {appMode !== 'student-dashboard' && (
-        <div className="absolute inset-0 z-0 transition-all duration-1000">
-          <motion.div 
-            initial={false}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <AnimatePresence mode="wait">
-              {bg.type === 'image' && (
-                <motion.img
-                  key="bg-image"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
-                  src={bg.image}
-                  alt="Background"
-                  className="h-full w-full object-cover transition-all duration-1000"
-                  style={bg.blurStyle}
-                />
-              )}
-              {bg.type === 'gradient' && (
-                <motion.div
-                  key={bg.gradientClass}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
-                  className={`absolute inset-0 ${bg.gradientClass}`}
-                />
-              )}
-            </AnimatePresence>
-          </motion.div>
-          <div className="absolute inset-0 transition-colors duration-1000" style={bg.overlayStyle} />
-        </div>
-      )}
+      <div className="absolute inset-0 z-0 transition-all duration-1000">
+        <AnimatePresence mode="wait">
+          {bg.type === 'image' && (
+            <motion.img
+              key="bg-image"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              src={bg.value}
+              alt="Background"
+              className="h-full w-full object-cover transition-all duration-1000"
+              style={{ filter: `blur(${bg.blur}px)` }}
+            />
+          )}
+          {bg.type === 'gradient' && (
+            <motion.div
+              key="bg-gradient"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className={`absolute inset-0 ${bg.value}`}
+            />
+          )}
+          {bg.type === 'solid' && (
+             <motion.div
+              key="bg-solid"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="absolute inset-0"
+              style={{ backgroundColor: bg.value || '#0f0f13' }}
+            />
+          )}
+          {bg.type === 'video' && (
+            <motion.div
+              key="bg-video"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="absolute inset-0 overflow-hidden pointer-events-none"
+            >
+               <div className="absolute inset-0 bg-black" /> {/* Fallback/Base */}
+               {getYouTubeId(bg.value) && (
+                 <iframe
+                    className="absolute top-1/2 left-1/2 w-[100vw] h-[100vh] min-w-[177.77vh] min-h-[56.25vw] -translate-x-1/2 -translate-y-1/2 object-cover pointer-events-none"
+                    src={`https://www.youtube.com/embed/${getYouTubeId(bg.value)}?autoplay=1&mute=1&controls=0&loop=1&playlist=${getYouTubeId(bg.value)}&showinfo=0&modestbranding=1&iv_load_policy=3&rel=0&disablekb=1`}
+                    title="Background Video"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    style={{ filter: `blur(${bg.blur}px)`, opacity: 0.8 }}
+                  />
+               )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div 
+          className="absolute inset-0 transition-colors duration-1000 pointer-events-none" 
+          style={{ backgroundColor: `rgba(0, 0, 0, ${bg.overlay / 100})` }} 
+        />
+      </div>
 
       {/* Top Bar */}
       {appMode !== 'student-dashboard' && (
@@ -257,7 +277,7 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl font-bold tracking-tighter text-white select-none drop-shadow-md pointer-events-auto flex items-center gap-2"
           >
-            <Leaf className="text-green-400" size={24} />
+            <LayoutDashboard className="text-indigo-400" size={24} />
             EgyFlow
           </motion.div>
           <AnimatePresence>
@@ -280,7 +300,7 @@ export default function App() {
         <AnimatePresence mode="wait">
           {appMode === 'home' && (
             <motion.div key="home" className="w-full h-full flex justify-center">
-              <ClockMode />
+              <ClockMode settings={settings} />
             </motion.div>
           )}
           {appMode === 'focus' && (
@@ -290,7 +310,7 @@ export default function App() {
           )}
           {appMode === 'ambient' && (
             <motion.div key="ambient" className="w-full h-full flex justify-center">
-              <AmbientMode />
+              <AmbientMode settings={settings} updateSettings={updateSettings} />
             </motion.div>
           )}
           {appMode === 'tracker' && (
@@ -329,9 +349,9 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="flex items-center gap-2 pointer-events-auto overflow-x-auto max-w-full custom-scrollbar pb-2 md:pb-0 w-full md:w-auto justify-center md:justify-start"
+              className="flex items-center gap-4 pointer-events-auto overflow-x-auto max-w-full custom-scrollbar pb-2 md:pb-0 w-full md:w-auto justify-center md:justify-start"
             >
-              <div className="relative shrink-0">
+              <div className={`relative shrink-0 transition-all duration-300 ${isDashboardHovered ? 'opacity-40 scale-95 blur-[1px]' : 'opacity-100'}`}>
                 <MotionButton 
                   onClick={() => setIsMusicPlayerOpen(!isMusicPlayerOpen)}
                   className="p-3 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white" 
@@ -353,20 +373,29 @@ export default function App() {
                   )}
                 </AnimatePresence>
               </div>
-              <MotionButton 
+
+              {/* Prominent Dashboard Button */}
+              <motion.button 
                 onClick={() => setAppMode('student-dashboard')}
-                className="p-3 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white" 
+                onHoverStart={() => setIsDashboardHovered(true)}
+                onHoverEnd={() => setIsDashboardHovered(false)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-4 md:p-5 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl text-white shadow-[0_0_20px_rgba(99,102,241,0.6)] border border-indigo-400/30 relative z-20 mx-2 flex items-center justify-center group"
                 title="Student Dashboard"
               >
-                <LayoutDashboard size={20} />
-              </MotionButton>
-              <MotionButton 
-                onClick={() => setIsNotepadOpen(true)}
-                className="p-3 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white" 
-                title="Notepad (N)"
-              >
-                <FileText size={20} />
-              </MotionButton>
+                <LayoutDashboard size={28} className="text-white drop-shadow-md" />
+              </motion.button>
+
+              <div className={`transition-all duration-300 ${isDashboardHovered ? 'opacity-40 scale-95 blur-[1px]' : 'opacity-100'}`}>
+                <MotionButton 
+                  onClick={() => setIsNotepadOpen(true)}
+                  className="p-3 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white" 
+                  title="Notepad (N)"
+                >
+                  <FileText size={20} />
+                </MotionButton>
+              </div>
             </motion.div>
 
             {/* Right Side */}
@@ -374,7 +403,7 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex items-center gap-2 md:gap-4 pointer-events-auto overflow-x-auto max-w-full custom-scrollbar pb-2 md:pb-0 w-full md:w-auto justify-center md:justify-end"
+              className={`flex items-center gap-2 md:gap-4 pointer-events-auto overflow-x-auto max-w-full custom-scrollbar pb-2 md:pb-0 w-full md:w-auto justify-center md:justify-end transition-all duration-300 ${isDashboardHovered ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
             >
               {/* Mode Pill */}
               <div className="flex items-center gap-1 md:gap-2 bg-black/30 backdrop-blur-xl border border-white/10 rounded-full p-1.5 md:p-2 shadow-2xl shrink-0">
@@ -459,6 +488,9 @@ export default function App() {
           </AnimatePresence>
         </>
       )}
+      
+      {/* AI Chatbot available globally except in student dashboard where it has a dedicated view */}
+      {appMode !== 'student-dashboard' && <AIChatbot />}
     </div>
   );
 }
