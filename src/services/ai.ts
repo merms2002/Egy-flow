@@ -1,7 +1,17 @@
 import { GoogleGenAI, Type, Schema, ThinkingLevel } from "@google/genai";
 
+const getGeminiClient = () => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Missing VITE_GEMINI_API_KEY. Add it to .env.local before using AI features.');
+  }
+
+  return new GoogleGenAI({ apiKey });
+};
+
 export const analyzeStudyProfile = async (data: any) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = getGeminiClient();
 
   try {
     const prompt = `
@@ -53,7 +63,7 @@ export const analyzeStudyProfile = async (data: any) => {
 };
 
 export const generateSubjectPlan = async (subject: string, currentStatus: string, context?: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = getGeminiClient();
 
   try {
     const prompt = `
@@ -126,7 +136,7 @@ export const chatWithAI = async (
   tools?: any[],
   fileParts?: any[]
 ) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = getGeminiClient();
   try {
     const contents = history.map(h => ({
       role: h.role,
@@ -167,7 +177,7 @@ export const chatWithAI = async (
 };
 
 export const thinkDeeply = async (question: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = getGeminiClient();
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3.1-pro-preview",
@@ -184,7 +194,7 @@ export const thinkDeeply = async (question: string) => {
 };
 
 export const fastAIResponse = async (prompt: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = getGeminiClient();
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3.1-flash-lite-preview",
@@ -198,7 +208,7 @@ export const fastAIResponse = async (prompt: string) => {
 };
 
 export const transcribeAudio = async (base64Audio: string, mimeType: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = getGeminiClient();
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",

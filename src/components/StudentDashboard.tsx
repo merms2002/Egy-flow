@@ -17,6 +17,7 @@ import WelcomeTour from './WelcomeTour';
 import AnalyticsView from './dashboard/AnalyticsView';
 import SubjectRoadmap from './dashboard/SubjectRoadmap';
 import AIChatView from './dashboard/AIChatView';
+import GoalsView from './dashboard/GoalsView';
 
 interface StudentDashboardProps {
   user: any;
@@ -950,14 +951,7 @@ const StudentDashboard = ({ user, onSwitchMode }: StudentDashboardProps) => {
 
           {currentView === 'Analytics' && <AnalyticsView user={user} />}
 
-          {currentView === 'Goals' && (
-            <div className="flex items-center justify-center h-full text-white/40">
-              <div className="text-center">
-                <Target size={48} className="mx-auto mb-4 opacity-20" />
-                <p>Goals View Coming Soon</p>
-              </div>
-            </div>
-          )}
+          {currentView === 'Goals' && <GoalsView />}
         </div>
       </div>
       
