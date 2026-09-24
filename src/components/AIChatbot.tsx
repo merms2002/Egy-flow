@@ -159,7 +159,7 @@ const AIChatbot = () => {
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-6 right-6 p-4 rounded-full shadow-2xl z-40 transition-colors ${
-          isOpen ? 'bg-indigo-700 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-500'
+          isOpen ? 'bg-[#522B5B] text-[#FBE4D8]' : 'bg-[#2B124C] text-[#DFB6B2] hover:bg-[#522B5B] hover:text-[#FBE4D8]'
         }`}
       >
         <MessageSquare size={24} />
@@ -172,29 +172,30 @@ const AIChatbot = () => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 w-[350px] md:w-[400px] h-[500px] max-h-[80vh] bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 w-[350px] md:w-[400px] h-[500px] max-h-[80vh] bg-[#190019] border border-[#522B5B]/30 rounded-2xl shadow-[0_0_40px_rgba(43,18,76,0.3)] z-50 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
+            <div className="p-4 border-b border-[#522B5B]/30 bg-[#2B124C] flex items-center justify-between relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#2B124C] to-[#522B5B] opacity-50"></div>
+              <div className="flex items-center gap-2 relative z-10">
+                <div className="p-2 bg-[#DFB6B2]/20 rounded-lg text-[#FBE4D8] shadow-[0_0_15px_rgba(223,182,178,0.2)]">
                   <Sparkles size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white">EgyFlow AI</h3>
-                  <p className="text-xs text-white/60">Powered by Gemini</p>
+                  <h3 className="font-bold text-[#FBE4D8]">EgyFlow AI</h3>
+                  <p className="text-xs text-[#DFB6B2]">Powered by Gemini</p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 text-[#DFB6B2]/60 hover:text-[#FBE4D8] hover:bg-[#854F6C]/40 rounded-lg transition-colors relative z-10"
               >
                 <X size={20} />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gradient-to-b from-[#190019] to-[#2B124C]/20">
               {messages.map((msg) => (
                 <div 
                   key={msg.id} 
@@ -203,20 +204,20 @@ const AIChatbot = () => {
                   <div 
                     className={`max-w-[85%] p-3 rounded-2xl ${
                       msg.role === 'user' 
-                        ? 'bg-indigo-600 text-white rounded-br-sm' 
+                        ? 'bg-[#522B5B] text-[#FBE4D8] rounded-br-sm shadow-lg' 
                         : msg.isThinking
-                          ? 'bg-purple-500/10 border border-purple-500/20 text-purple-100 rounded-bl-sm shadow-[0_0_15px_rgba(168,85,247,0.1)]'
-                          : 'bg-white/10 text-white/90 rounded-bl-sm'
+                          ? 'bg-[#854F6C]/20 border border-[#854F6C]/40 text-[#DFB6B2] rounded-bl-sm shadow-[0_0_15px_rgba(133,79,108,0.2)]'
+                          : 'bg-[#2B124C] border border-[#522B5B]/50 text-[#FBE4D8] rounded-bl-sm shadow-md'
                     }`}
                   >
                     {msg.role === 'ai' && msg.isThinking && (
-                      <div className="flex items-center gap-1.5 mb-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 mb-2 text-[#DFB6B2] text-xs font-bold uppercase tracking-wider">
                         <BrainCircuit size={12} />
                         Deep Thought
                       </div>
                     )}
                     {msg.role === 'ai' ? (
-                      <div className="markdown-body text-sm prose prose-invert max-w-none">
+                      <div className="markdown-body text-sm prose prose-invert max-w-none prose-p:text-[#FBE4D8] prose-headings:text-[#FBE4D8] prose-a:text-[#DFB6B2] prose-strong:text-[#FBE4D8]">
                         <Markdown>{msg.text}</Markdown>
                       </div>
                     ) : (
@@ -227,9 +228,9 @@ const AIChatbot = () => {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white/10 text-white/90 p-3 rounded-2xl rounded-bl-sm flex items-center gap-2">
-                    <Loader2 size={16} className="animate-spin text-indigo-400" />
-                    <span className="text-sm text-white/60">
+                  <div className="bg-[#2B124C] border border-[#522B5B]/50 text-[#FBE4D8] p-3 rounded-2xl rounded-bl-sm flex items-center gap-2 shadow-md">
+                    <Loader2 size={16} className="animate-spin text-[#DFB6B2]" />
+                    <span className="text-sm text-[#DFB6B2]">
                       {isDeepThinking ? 'Thinking deeply...' : 'Typing...'}
                     </span>
                   </div>
@@ -239,16 +240,16 @@ const AIChatbot = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-white/10 bg-white/5">
+            <div className="p-4 border-t border-[#522B5B]/30 bg-[#190019]">
               {attachedFile && (
-                <div className="flex items-center justify-between bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-2 mb-3">
+                <div className="flex items-center justify-between bg-[#522B5B]/30 border border-[#854F6C]/50 rounded-lg p-2 mb-3">
                   <div className="flex items-center gap-2 overflow-hidden">
-                    <FileText size={16} className="text-indigo-400 shrink-0" />
-                    <span className="text-sm text-indigo-300 truncate">{attachedFile.name}</span>
+                    <FileText size={16} className="text-[#DFB6B2] shrink-0" />
+                    <span className="text-sm text-[#FBE4D8] truncate">{attachedFile.name}</span>
                   </div>
                   <button 
                     onClick={() => setAttachedFile(null)}
-                    className="p-1 text-indigo-400/60 hover:text-indigo-400 hover:bg-indigo-500/20 rounded transition-colors"
+                    className="p-1 text-[#DFB6B2]/60 hover:text-[#FBE4D8] hover:bg-[#854F6C]/40 rounded transition-colors"
                   >
                     <X size={14} />
                   </button>
@@ -259,8 +260,8 @@ const AIChatbot = () => {
                   onClick={() => setIsDeepThinking(!isDeepThinking)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     isDeepThinking 
-                      ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.2)]' 
-                      : 'bg-white/5 text-white/60 hover:bg-white/10 border border-transparent'
+                      ? 'bg-[#854F6C]/30 text-[#FBE4D8] border border-[#854F6C]/50 shadow-[0_0_15px_rgba(133,79,108,0.3)]' 
+                      : 'bg-[#2B124C] text-[#DFB6B2] hover:bg-[#522B5B]/50 border border-transparent'
                   }`}
                   title="Use advanced reasoning for complex questions"
                 >
@@ -274,11 +275,11 @@ const AIChatbot = () => {
                   ref={fileInputRef} 
                   onChange={handleFileChange} 
                   className="hidden" 
-                  accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+                  accept=".pdf,.txt,.md,.csv,.png,.jpg,.jpeg,.webp"
                 />
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-2 bg-white/5 text-white/60 rounded-xl hover:bg-white/10 hover:text-white transition-colors"
+                  className="p-2 bg-[#2B124C] text-[#DFB6B2] rounded-xl hover:bg-[#522B5B] hover:text-[#FBE4D8] transition-colors shadow-sm"
                   title="Attach file"
                 >
                   <Paperclip size={18} />
@@ -289,12 +290,12 @@ const AIChatbot = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask me anything..."
-                  className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-indigo-500"
+                  className="flex-1 bg-[#2B124C]/50 border border-[#522B5B]/50 rounded-xl px-4 py-2 text-sm text-[#FBE4D8] placeholder:text-[#DFB6B2]/50 focus:outline-none focus:border-[#854F6C] focus:bg-[#2B124C] transition-colors"
                 />
                 <button
                   onClick={handleSend}
                   disabled={(!input.trim() && !attachedFile) || isLoading}
-                  className="p-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 bg-[#522B5B] text-[#FBE4D8] rounded-xl hover:bg-[#854F6C] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
                 >
                   <Send size={18} />
                 </button>

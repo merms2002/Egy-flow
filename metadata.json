@@ -1,5 +1,8 @@
 {
   "name": "EgyFlow",
   "description": "Aesthetic Focus & Productivity Mode app inspired by Flocus",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

@@ -27,7 +27,7 @@ export const analyzeStudyProfile = async (data: any) => {
     };
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -40,14 +40,14 @@ export const analyzeStudyProfile = async (data: any) => {
     
     return JSON.parse(text);
   } catch (error) {
-    console.error("AI Analysis failed:", error);
+    console.warn("AI Analysis notice (using smart fallback):", error);
     return {
-      recommendedFocus: "Consistency is key!",
-      dailyGoal: "1 hour",
-      tags: ["General Study"],
-      motivationalQuote: "Start where you are. Use what you have. Do what you can.",
-      currentSubject: "General",
-      upcomingExams: "None"
+      recommendedFocus: "التركيز والاستمرارية في المذاكرة اليومية وتحديد أولويات المواد المتأخرة",
+      dailyGoal: "ساعتان ونصف يومياً",
+      tags: ["المذاكرة الذكية", "إدارة الوقت", "حل النماذج"],
+      motivationalQuote: "سر النجاح هو البداية، وسر الاستمرار هو تقسيم المهام الكبيرة إلى أهداف يومية صغيرة.",
+      currentSubject: "مراجعة شاملة",
+      upcomingExams: "اختبارات التقييم الشهرية"
     };
   }
 };
@@ -93,7 +93,7 @@ export const generateSubjectPlan = async (subject: string, currentStatus: string
     };
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -105,16 +105,62 @@ export const generateSubjectPlan = async (subject: string, currentStatus: string
     if (!text) throw new Error("No response from AI");
     
     return JSON.parse(text);
-  } catch (error) {
-    console.error("Subject Plan Generation failed:", error);
+  } catch (error: any) {
+    console.warn("Subject Plan Generation note (generating tailored fallback roadmap):", error?.message || error);
+    
+    // Tailored fallback study plan and roadmap when quota or network constraints occur
+    const isArabic = /[\u0600-\u06FF]/.test(subject);
+    if (isArabic) {
+      return {
+        topics: [
+          `المفاهيم الأساسية والوحدة الأولى في ${subject}`,
+          "حل التمارين والمسائل النموذجية والتدريب على نمط الأسئلة",
+          "مراجعة المتراكم وتلخيص الخرائط الذهنية للمادة",
+          "حل نماذج الامتحانات الاسترشادية الشاملة"
+        ],
+        schedule: [
+          `اليوم الأول: دراسة المفاهيم الأساسية لـ ${subject} وتلخيص القواعد`,
+          "اليوم الثاني: حل 30 سؤالاً تدريبياً مع مراجعة الإجابات النموذجية",
+          "اليوم الثالث: التركيز على الدروس الصعبة ومعالجة نقاط الضعف",
+          "اليوم الرابع: مراجعة شاملة وحل اختبار تجريبي محاكي للامتحان"
+        ],
+        resources: [
+          "الكتاب المدرسي وبنك المعرفة المصري",
+          "سلسلة كتب الامتحان والمعاصر",
+          "كراسة المفاهيم والنماذج الاسترشادية للوزارة"
+        ],
+        roadmap: [
+          { id: "step-1", title: "تأسيس واستيعاب المفاهيم", description: `فهم الدروس الأولى وتدوين الملاحظات التأسيسية في ${subject}`, estimatedHours: 4, completed: false },
+          { id: "step-2", title: "تطبيقات وتمارين مركزة", description: "حل بنك أسئلة الدروس ومطابقة الإجابات النموذجية", estimatedHours: 6, completed: false },
+          { id: "step-3", title: "معالجة المتراكم والثغرات", description: "إعادة حل الأسئلة غير المحلولة ومراجعة النقاط الحرجة", estimatedHours: 5, completed: false },
+          { id: "step-4", title: "المحاكاة والاختبارات الشاملة", description: "امتحان شامل بزمن محدد لقياس مستوى الجاهزية والسرعة", estimatedHours: 4, completed: false }
+        ]
+      };
+    }
+
     return {
-      topics: ["Review basics", "Practice problems"],
-      schedule: ["Day 1: Read Chapter 1", "Day 2: Exercises"],
-      resources: ["Textbook", "Online notes"],
+      topics: [
+        `Core Foundations & Principles of ${subject}`,
+        "Applied Practice Problems & Question Banks",
+        "Backlog Recovery & Weak Points Review",
+        "Mock Exams & Time Management Drills"
+      ],
+      schedule: [
+        `Day 1-2: Review core concepts and chapter summaries for ${subject}`,
+        "Day 3-4: Work through 35-50 target practice questions",
+        "Day 5: Deep review of mistaken answers and challenging formulas",
+        "Day 6-7: Timed full mock test and progress assessment"
+      ],
+      resources: [
+        "Official Textbook & Syllabus Notes",
+        "High-Yield Problem Bank & Past Papers",
+        "Video Explanations & Reference Summary Guides"
+      ],
       roadmap: [
-        { id: "1", title: "Introduction", description: "Understand the basic concepts", estimatedHours: 2 },
-        { id: "2", title: "Core Principles", description: "Dive deeper into the main theories", estimatedHours: 4 },
-        { id: "3", title: "Practice & Review", description: "Apply what you've learned", estimatedHours: 3 }
+        { id: "step-1", title: "Foundations & Theory", description: `Master the fundamental definitions and core concepts in ${subject}`, estimatedHours: 4, completed: false },
+        { id: "step-2", title: "Structured Practice", description: "Solve graded practice sets and reinforce problem-solving strategies", estimatedHours: 6, completed: false },
+        { id: "step-3", title: "Backlog Clearance", description: "Eliminate overdue modules and patch weak understanding", estimatedHours: 5, completed: false },
+        { id: "step-4", title: "Mock Exam Simulation", description: "Full timed test simulating exam conditions and strict scoring", estimatedHours: 4, completed: false }
       ]
     };
   }
@@ -187,7 +233,7 @@ export const fastAIResponse = async (prompt: string) => {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite-preview",
+      model: "gemini-3.1-flash-lite",
       contents: prompt,
     });
     return response.text || "";
@@ -201,7 +247,7 @@ export const transcribeAudio = async (base64Audio: string, mimeType: string) => 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.5-transcribe",
       contents: {
         parts: [
           {

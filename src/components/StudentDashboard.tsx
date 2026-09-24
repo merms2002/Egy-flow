@@ -9,7 +9,7 @@ import { doc, getDoc, collection, query, where, orderBy, limit, onSnapshot, upda
 import { db, auth } from '../services/firebase';
 import { signOut } from 'firebase/auth';
 import { analyzeStudyProfile, generateSubjectPlan } from '../services/ai';
-import { useStudentStore, SubjectPlan } from '../store/useStudentStore';
+import { useStudentStore, SubjectPlan, createDefaultPlanForSubject } from '../store/useStudentStore';
 import { useTaskStore } from '../store/useTaskStore';
 import SubjectsView from './dashboard/SubjectsView';
 import ScheduleView from './dashboard/ScheduleView';
@@ -132,23 +132,12 @@ const StudentDashboard = ({ user, onSwitchMode }: StudentDashboardProps) => {
   const { subjects, toggleSubjectCompletion, updateSubjectProgress, subjectPlans, setSubjectPlan } = useStudentStore();
   const backlogSubjects = subjects.filter(s => s.status === 'Backlog');
 
-  // Auto-generate plans for subjects that don't have them on first load
+  // Ensure any subject has a plan initialized locally without exhausting AI quota
   useEffect(() => {
-    const generateMissingPlans = async () => {
-      for (const subject of subjects) {
-        if (!subjectPlans[subject.id]) {
-          try {
-            const plan = await generateSubjectPlan(subject.name, subject.status, "Initial automatic generation");
-            setSubjectPlan(subject.id, plan);
-          } catch (error) {
-            console.error(`Failed to auto-generate plan for ${subject.name}`, error);
-          }
-        }
+    for (const subject of subjects) {
+      if (!subjectPlans[subject.id]) {
+        setSubjectPlan(subject.id, createDefaultPlanForSubject(subject.name));
       }
-    };
-
-    if (subjects.length > 0) {
-      generateMissingPlans();
     }
   }, [subjects, subjectPlans, setSubjectPlan]);
 
